@@ -465,13 +465,20 @@ class MySQLServer {
 
       await this.server.connect(transport);
 
-      app.post('/mcp', async (req: Request, res: Response) => {
+      const postHandler = async (req: Request, res: Response) => {
         await transport.handleRequest(req, res, req.body);
-      });
+      };
 
-      app.get('/mcp', async (req: Request, res: Response) => {
+      const getHandler = async (req: Request, res: Response) => {
         await transport.handleRequest(req, res, undefined);
-      });
+      };
+
+      // Support both '/mcp' and '/' to be compatible with different clients
+      app.post('/mcp', postHandler);
+      app.post('/', postHandler);
+
+      app.get('/mcp', getHandler);
+      app.get('/', getHandler);
 
       app.listen(port, () => {
         console.error(`MySQL MCP server running on http://localhost:${port}`);
