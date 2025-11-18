@@ -1,38 +1,41 @@
-transport:
-  type: stdio
-  command: npx
-  args:
-    - "-y"
-    - "mcp-server-mysql"
-  env:
-    MYSQL_HOST: "{{mysqlHost}}"
-    MYSQL_USER: "{{mysqlUser}}"
-    MYSQL_DATABASE: "{{mysqlDatabase}}"
-    MYSQL_PASSWORD: "{{mysqlPassword}}"
+runtime: "typescript"
 
-configSchema:
-  type: object
-  properties:
-    mysqlHost:
-      type: string
-      title: MySQL Host
-      description: Host del servidor MySQL (ej. localhost, 192.168.1.100)
-      default: localhost
-    mysqlUser:
-      type: string
-      title: MySQL User
-      description: Usuario de MySQL
-    mysqlDatabase:
-      type: string
-      title: MySQL Database
-      description: Nombre de la base de datos a conectar
-    mysqlPassword:
-      type: string
-      title: MySQL Password
-      description: Contraseña del usuario MySQL
-      format: password
-  required:
-    - mysqlHost
-    - mysqlUser
-    - mysqlDatabase
-    - mysqlPassword
+env:
+  MYSQL_HOST: "{{mysqlHost}}"
+  MYSQL_USER: "{{mysqlUser}}"
+  MYSQL_DATABASE: "{{mysqlDatabase}}"
+  MYSQL_PASSWORD: "{{mysqlPassword}}"
+
+startCommand:
+  type: "http"
+  configSchema:
+    type: "object"
+    properties:
+      mysqlHost:
+        type: "string"
+        title: "MySQL Host"
+        description: "Host del servidor MySQL (ejemplo: localhost, 192.168.1.100)"
+        default: "localhost"
+      mysqlUser:
+        type: "string"
+        title: "MySQL User"
+        description: "Usuario de MySQL"
+      mysqlDatabase:
+        type: "string"
+        title: "MySQL Database"
+        description: "Nombre de la base de datos a conectar"
+      mysqlPassword:
+        type: "string"
+        title: "MySQL Password"
+        description: "Contraseña del usuario MySQL"
+        format: "password"
+    required:
+      - "mysqlHost"
+      - "mysqlUser"
+      - "mysqlDatabase"
+      - "mysqlPassword"
+  exampleConfig:
+    mysqlHost: "localhost"
+    mysqlUser: "root"
+    mysqlDatabase: "test"
+    mysqlPassword: "password123"
