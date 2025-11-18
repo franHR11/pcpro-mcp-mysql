@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import express, { Request, Response } from 'express';
 import {
   CallToolRequestSchema,
@@ -456,21 +456,21 @@ class MySQLServer {
     if (process.env.PORT) {
       const app = express();
       const port = process.env.PORT;
+      app.use(express.json());
 
-      let transport: SSEServerTransport;
-
-      app.get('/sse', async (req: Request, res: Response) => {
-        console.error(`New SSE connection`);
-        transport = new SSEServerTransport('/messages', res);
-        await this.server.connect(transport);
+      const transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: undefined,
+        enableJsonResponse: true,
       });
 
-      app.post('/messages', async (req: Request, res: Response) => {
-        if (transport) {
-          await transport.handlePostMessage(req, res);
-        } else {
-          res.status(404).send('Session not found');
-        }
+      await this.server.connect(transport);
+
+      app.post('/mcp', async (req: Request, res: Response) => {
+        await transport.handleRequest(req, res, req.body);
+      });
+
+      app.get('/mcp', async (req: Request, res: Response) => {
+        await transport.handleRequest(req, res, undefined);
       });
 
       app.listen(port, () => {
