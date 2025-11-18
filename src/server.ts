@@ -45,18 +45,85 @@ export default function createServer({
     });
 
     let connection: mysql.Connection | null = null;
+    let currentConfig: MySqlConfig = { ...dbConfig };
+
+    async function connectWithConfig(partial: Partial<MySqlConfig>): Promise<mysql.Connection> {
+        const newConfig: MySqlConfig = {
+            host: partial.host ?? currentConfig.host,
+            user: partial.user ?? currentConfig.user,
+            database: partial.database ?? currentConfig.database,
+            password: partial.password ?? currentConfig.password,
+        };
+
+        if (connection) {
+            await connection.end();
+            connection = null;
+        }
+
+        currentConfig = newConfig;
+        connection = await mysql.createConnection(currentConfig);
+        return connection;
+    }
 
     async function getConnection(): Promise<mysql.Connection> {
         if (!connection) {
-            connection = await mysql.createConnection({
-                host: dbConfig.host,
-                user: dbConfig.user,
-                database: dbConfig.database,
-                password: dbConfig.password,
-            });
+            return connectWithConfig({});
         }
         return connection;
     }
+
+    // Herramienta: conectar a la base de datos
+    server.registerTool(
+        "connect_db",
+        {
+            title: "Conectar a base de datos MySQL",
+            description:
+                "Establece o actualiza la conexión a MySQL usando las credenciales proporcionadas",
+            inputSchema: {
+                host: z
+                    .string()
+                    .optional()
+                    .describe(
+                        "Host del servidor MySQL (por defecto el configurado en la sesión o entorno)",
+                    ),
+                user: z
+                    .string()
+                    .optional()
+                    .describe(
+                        "Usuario de MySQL (por defecto el configurado en la sesión o entorno)",
+                    ),
+                database: z
+                    .string()
+                    .optional()
+                    .describe(
+                        "Nombre de la base de datos MySQL (por defecto la configurada en la sesión o entorno)",
+                    ),
+                password: z
+                    .string()
+                    .optional()
+                    .describe(
+                        "Contraseña del usuario MySQL (por defecto la configurada en la sesión o entorno)",
+                    ),
+            },
+        },
+        async ({ host, user, database, password }) => {
+            await connectWithConfig({
+                host: host as string | undefined,
+                user: user as string | undefined,
+                database: database as string | undefined,
+                password: password as string | undefined,
+            });
+
+            return {
+                content: [
+                    {
+                        type: "text" as const,
+                        text: "Conexión a MySQL establecida correctamente",
+                    },
+                ],
+            };
+        },
+    );
 
     // Herramienta: ejecutar consultas SELECT
     server.registerTool(
