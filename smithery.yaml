@@ -1,57 +1,38 @@
-name: mcp-server-mysql
-description: Servidor MCP para consultas a bases de datos MySQL
-version: 1.0.0
-icon: 🗄️
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "mcp-server-mysql"
+  env:
+    MYSQL_HOST: "{{mysqlHost}}"
+    MYSQL_USER: "{{mysqlUser}}"
+    MYSQL_DATABASE: "{{mysqlDatabase}}"
+    MYSQL_PASSWORD: "{{mysqlPassword}}"
 
-# Tipo de servidor (puede ser npm, docker, etc.)
-runtime: npm
-
-# Comando para ejecutar el servidor
-command: npx
-
-# Argumentos del comando
-args:
-  - "-y"
-  - "mcp-server-mysql"
-
-# Inputs que el usuario debe proporcionar
-inputs:
-  - name: mysqlHost
-    description: Host del servidor MySQL
-    type: string
-    required: true
-    default: localhost
-
-  - name: mysqlUser
-    description: Usuario de MySQL
-    type: string
-    required: true
-
-  - name: mysqlDatabase
-    description: Nombre de la base de datos
-    type: string
-    required: true
-
-  - name: mysqlPassword
-    description: Contraseña de MySQL
-    type: secret
-    required: true
-
-# Mapeo de inputs a variables de entorno
-env:
-  MYSQL_HOST: "{{mysqlHost}}"
-  MYSQL_USER: "{{mysqlUser}}"
-  MYSQL_DATABASE: "{{mysqlDatabase}}"
-  MYSQL_PASSWORD: "{{mysqlPassword}}"
-
-# Categorías para Smithery
-categories:
-  - database
-  - data-access
-
-# Homepage y documentación
-homepage: https://github.com/franHR11/pcpro-mcp-mysql
-documentation: https://github.com/franHR11/pcpro-mcp-mysql
-
-# Licencia
-license: MIT
+configSchema:
+  type: object
+  properties:
+    mysqlHost:
+      type: string
+      title: MySQL Host
+      description: Host del servidor MySQL (ej. localhost, 192.168.1.100)
+      default: localhost
+    mysqlUser:
+      type: string
+      title: MySQL User
+      description: Usuario de MySQL
+    mysqlDatabase:
+      type: string
+      title: MySQL Database
+      description: Nombre de la base de datos a conectar
+    mysqlPassword:
+      type: string
+      title: MySQL Password
+      description: Contraseña del usuario MySQL
+      format: password
+  required:
+    - mysqlHost
+    - mysqlUser
+    - mysqlDatabase
+    - mysqlPassword
