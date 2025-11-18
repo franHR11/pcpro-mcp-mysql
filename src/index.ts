@@ -451,9 +451,34 @@ class MySQLServer {
   }
 
   async run() {
-    const transport = new StdioServerTransport();
-    await this.server.connect(transport);
-    console.error('MySQL MCP server running on stdio');
+    if (process.env.PORT) {
+      const app = express();
+      const port = process.env.PORT;
+
+      let transport: SSEServerTransport;
+
+      app.get('/sse', async (req, res) => {
+        console.error(`New SSE connection`);
+        transport = new SSEServerTransport('/messages', res);
+        await this.server.connect(transport);
+      });
+
+      app.post('/messages', async (req, res) => {
+        if (transport) {
+          await transport.handlePostMessage(req, res);
+        } else {
+          res.status(404).send('Session not found');
+        }
+      });
+
+      app.listen(port, () => {
+        console.error(`MySQL MCP server running on http://localhost:${port}`);
+      });
+    } else {
+      const transport = new StdioServerTransport();
+      await this.server.connect(transport);
+      console.error('MySQL MCP server running on stdio');
+    }
   }
 }
 
