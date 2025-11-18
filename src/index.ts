@@ -110,9 +110,7 @@ class MySQLServer {
     }
 
     if (!this.config) {
-      console.error('No database configuration provided. Please provide a MySQL URL as a command line argument');
-      console.error('Example: node xxx.js mysql://user:password@localhost:3306/mydb');
-      process.exit(1);
+      console.error('No initial database configuration provided. The server will start, but database tools require configuration via environment variables or the connect_db tool.');
     }
 
     this.setupToolHandlers();
