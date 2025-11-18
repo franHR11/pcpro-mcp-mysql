@@ -133,7 +133,15 @@ export default function createServer({ config }: { config: Config }) {
         port: z.number().describe('Database port (optional)').optional(),
       }),
     },
-    async ({ url, host, user, password, database, port }) => {
+    async (args: {
+      url?: string;
+      host?: string;
+      user?: string;
+      password?: string;
+      database?: string;
+      port?: number;
+    }) => {
+      const { url, host, user, password, database, port } = args;
       let newConfig: DatabaseConfig | null = null;
 
       if (url) {
@@ -210,7 +218,8 @@ export default function createServer({ config }: { config: Config }) {
           .optional(),
       }),
     },
-    async ({ sql, params }) => {
+    async (args: { sql: string; params?: (string | number | boolean | null)[] }) => {
+      const { sql, params } = args;
       await ensureConnection();
 
       if (!sql) {
@@ -328,7 +337,8 @@ export default function createServer({ config }: { config: Config }) {
         table: z.string().describe('Table name'),
       }),
     },
-    async ({ table }) => {
+    async (args: { table: string }) => {
+      const { table } = args;
       await ensureConnection();
 
       if (!table) {

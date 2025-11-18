@@ -10,7 +10,7 @@
     "build"
   ],
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build": "tsc",
     "prepare": "npm run build",
     "watch": "tsc --watch",
     "inspector": "npx @modelcontextprotocol/inspector build/index.js"
@@ -29,7 +29,8 @@
     "@modelcontextprotocol/sdk": "^0.6.0",
     "dotenv": "^16.4.7",
     "mcp-evals": "^1.0.18",
-    "mysql2": "^3.11.5"
+    "mysql2": "^3.11.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
