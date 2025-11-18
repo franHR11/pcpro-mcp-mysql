@@ -1,0 +1,94 @@
+# Quickstart: TypeScript
+
+> Deploy your first Typescript Streamable HTTP MCP server in minutes
+
+Get started with one command:
+
+```bash
+npx create-smithery@latest
+```
+
+### Overview
+
+In this quickstart, we'll build a simple MCP server that says *hello* to users. We'll use the official [TypeScript MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk) with the [Smithery CLI](https://github.com/smithery-ai/cli). By the end, you'll have a live, deployed server with built-in authentication that you can connect to from any MCP client.
+
+For Python, check out our [Python quickstart guide](/getting_started/quickstart_build_python).
+
+### Prerequisites
+
+* [Node.js](https://nodejs.org/) >18 (includes npm)
+* A [Smithery API key](https://smithery.ai) for development features
+
+### 1. Initialize the Server
+
+```bash
+npx create-smithery@latest
+```
+
+This retrieves and executes the [Create Smithery](https://github.com/smithery-ai/create-smithery) initializer package, which sets up a TypeScript MCP server scaffold with example code and all necessary dependencies.
+
+The command will prompt you to configure your server, including selecting the transport method. For this quickstart, we'll use the HTTP transport.
+
+### 2. Edit the Server
+
+In `src/index.ts`, you'll see a default server that says hello to a given name. Edit it to add your own tools, resources, and prompts.
+
+Here's the basic structure:
+
+```typescript
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
+
+// Optional: Configuration schema for session
+// export const configSchema = z.object({
+//   debug: z.boolean().default(false).describe("Enable debug logging"),
+// });
+
+export default function createServer({ config }) {
+  const server = new McpServer({
+    name: "Say Hello",
+    version: "1.0.0",
+  });
+
+  // Add a tool
+  server.registerTool("hello", { // [!code highlight]
+    title: "Hello Tool", // [!code highlight]
+    description: "Say hello to someone", // [!code highlight]
+    inputSchema: { name: z.string().describe("Name to greet") }, // [!code highlight]
+  }, async ({ name }) => ({ // [!code highlight]
+    content: [{ type: "text", text: `Hello, ${name}!` }], // [!code highlight]
+  })); // [!code highlight]
+
+  // The scaffold also includes example resources and prompts
+  // server.registerResource(...) 
+  // server.registerPrompt(...)
+
+  return server.server;
+}
+```
+
+<Tip>
+  **Adding config schema (optional)**
+
+  Smithery allows users to customize server behavior for each session by providing API keys, adjusting settings, or modifying operational parameters. Optionally export a `configSchema` using Zod to define what configuration your server accepts:
+
+```typescript
+  export const configSchema = z.object({
+    apiKey: z.string().describe("Weather API key"),
+    temperatureUnit: z.enum(["celsius", "fahrenheit"]).default("celsius").describe("Temperature unit preference"),
+  });
+```
+
+</Tip>
+
+### 3. Testing the Server
+
+```bash
+npm run dev
+```
+
+This will port-forward your local server to the Smithery Playground via ngrok. You can now test your server by prompting something like "Say hello to Henry". You can also reference the [Smithery CLI](https://github.com/smithery-ai/cli) for more controls.
+
+### 4. Deploy the Server
+
+Deployment is a one-click process. Just [make a GitHub repo](https://github.com/new), push your local changes, and then [click &#34;Deploy&#34; on the Smithery home page](https://smithery.ai/new).

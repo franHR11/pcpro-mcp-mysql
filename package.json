@@ -4,7 +4,7 @@
     "description": "Servidor MCP para consultas MySQL",
     "main": "dist/index.js",
     "type": "module",
-    "module": "src/server.ts",
+    "module": "src/index.ts",
     "bin": {
         "mcp-server-mysql": "./dist/index.js"
     },
@@ -30,7 +30,8 @@
     "devDependencies": {
         "@types/node": "^22.10.1",
         "@types/express": "^4.17.21",
-        "typescript": "^5.7.2"
+        "typescript": "^5.7.2",
+        "@smithery/cli": "^1.4.6"
     },
     "engines": {
         "node": ">=18.0.0"
