@@ -1,5 +1,4 @@
 runtime: "typescript"
-target: "src/index.ts"
 
 env:
   MYSQL_HOST: "{{mysqlHost}}"

@@ -1,0 +1,143 @@
+# smithery.yaml
+
+> Reference documentation for the smithery.yaml configuration file.
+
+The `smithery.yaml` file provides configuration for your Model Context Protocol (MCP) server on Smithery. This file must be placed in your repository root.
+
+## Configuration Options
+
+### runtime
+
+**Type**: String\
+**Required**: Yes
+
+Specifies the deployment runtime for your MCP server:
+
+* `"typescript"` - Uses the Smithery CLI to build your TypeScript project directly
+* `"container"` - Uses Docker containers for deployment (supports any language)
+
+```yaml  theme={null}
+runtime: "typescript"  # or "container"
+```
+
+***
+
+## TypeScript Runtime
+
+When using `runtime: "typescript"`, Smithery uses the [Smithery CLI](https://github.com/smithery-ai/cli) to build your TypeScript MCP server directly. This is the recommended approach for TypeScript projects.
+
+```yaml  theme={null}
+runtime: "typescript"
+env:
+  NODE_ENV: "production"
+```
+
+### Properties
+
+| Property  | Type   | Description                                                       |
+| --------- | ------ | ----------------------------------------------------------------- |
+| `runtime` | string | Must be set to `"typescript"`                                     |
+| `env`     | object | Optional environment variables to inject when running your server |
+
+Your server will be built using `@smithery/cli build` and deployed as a streamable HTTP server. We recommend using the [Smithery CLI](https://github.com/smithery-ai/cli) for the best development experience.
+
+***
+
+## Container Runtime
+
+When using `runtime: "container"`, Smithery uses Docker containers to build and deploy your server. This supports any programming language and gives you full control over the deployment environment.
+
+```yaml  theme={null}
+runtime: "container"
+startCommand:
+  type: "http"
+  configSchema:
+    type: "object"
+    properties:
+      apiKey:
+        type: "string"
+        description: "Your API key"
+    required: ["apiKey"]
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
+```
+
+### startCommand
+
+**Type**: Object (Required for container runtime)
+
+Defines how your MCP server should be configured and accessed.
+
+| Property        | Type   | Description                                                    |
+| --------------- | ------ | -------------------------------------------------------------- |
+| `type`          | string | Must be set to `"http"` for HTTP-based MCP servers             |
+| `configSchema`  | object | JSON Schema defining the configuration options for your server |
+| `exampleConfig` | object | Example configuration values for testing                       |
+
+Your server must implement the [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) protocol and handle configuration passed via query parameters to the `/mcp` endpoint.
+
+**Example with complex configuration:**
+
+```yaml  theme={null}
+startCommand:
+  type: "http"
+  configSchema:
+    type: "object"
+    required: ["apiKey"]
+    properties:
+      apiKey:
+        type: "string"
+        title: "API Key"
+        description: "Your API key"
+      temperature:
+        type: "number"
+        default: 0.7
+        minimum: 0
+        maximum: 1
+      database:
+        type: "object"
+        properties:
+          host:
+            type: "string"
+            default: "localhost"
+          port:
+            type: "integer"
+            default: 5432
+  exampleConfig:
+    apiKey: "sk-example123"
+    temperature: 0.8
+    database:
+      host: "localhost"
+      port: 5432
+```
+
+### build
+
+**Type**: Object (Optional for container runtime)
+
+Contains Docker build configuration for your server.
+
+| Property          | Type   | Description                                                             |
+| ----------------- | ------ | ----------------------------------------------------------------------- |
+| `dockerfile`      | string | Path to Dockerfile, relative to smithery.yaml. Defaults to "Dockerfile" |
+| `dockerBuildPath` | string | Docker build context path, relative to smithery.yaml. Defaults to "."   |
+
+```yaml  theme={null}
+build:
+  dockerfile: "docker/Dockerfile"
+  dockerBuildPath: "."
+```
+
+### env
+
+**Type**: Object (Optional)
+
+Environment variables to inject when running your server. Available for both runtime types.
+
+```yaml  theme={null}
+env:
+  NODE_ENV: "production"
+  DEBUG: "true"
+  LOG_LEVEL: "info"
+```
