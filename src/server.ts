@@ -86,6 +86,7 @@ export default function createServer({
 
             const conn = await getConnection();
             const [rows] = await conn.execute(sqlText);
+            const output = { rows };
 
             return {
                 content: [
@@ -94,7 +95,7 @@ export default function createServer({
                         text: JSON.stringify(rows, null, 2),
                     },
                 ],
-                structuredContent: rows,
+                structuredContent: output,
             };
         }
     );
@@ -110,6 +111,7 @@ export default function createServer({
         async () => {
             const conn = await getConnection();
             const [tables] = await conn.execute("SHOW TABLES");
+            const output = { tables };
 
             return {
                 content: [
@@ -118,7 +120,7 @@ export default function createServer({
                         text: JSON.stringify(tables, null, 2),
                     },
                 ],
-                structuredContent: tables,
+                structuredContent: output,
             };
         }
     );
@@ -151,6 +153,7 @@ export default function createServer({
 
             const conn = await getConnection();
             const [columns] = await conn.execute(`DESCRIBE \`${tableName}\``);
+            const output = { columns };
 
             return {
                 content: [
@@ -159,7 +162,7 @@ export default function createServer({
                         text: JSON.stringify(columns, null, 2),
                     },
                 ],
-                structuredContent: columns,
+                structuredContent: output,
             };
         }
     );
