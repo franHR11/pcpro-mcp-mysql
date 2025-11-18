@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import express, { Request, Response } from 'express';
 import {
   CallToolRequestSchema,
   ErrorCode,
@@ -95,7 +97,7 @@ class MySQLServer {
         process.exit(1);
       }
     }
-    
+
     if (process.env.MYSQL_HOST && process.env.MYSQL_USER && process.env.MYSQL_PASSWORD && process.env.MYSQL_DATABASE) {
       // Fallback to environment variables if no command line argument is provided
       this.config = {
@@ -457,13 +459,13 @@ class MySQLServer {
 
       let transport: SSEServerTransport;
 
-      app.get('/sse', async (req, res) => {
+      app.get('/sse', async (req: Request, res: Response) => {
         console.error(`New SSE connection`);
         transport = new SSEServerTransport('/messages', res);
         await this.server.connect(transport);
       });
 
-      app.post('/messages', async (req, res) => {
+      app.post('/messages', async (req: Request, res: Response) => {
         if (transport) {
           await transport.handlePostMessage(req, res);
         } else {
