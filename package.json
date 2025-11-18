@@ -4,7 +4,7 @@
     "description": "Servidor MCP para consultas MySQL",
     "main": "dist/index.js",
     "type": "module",
-    "module": "src/index.ts",
+    "module": "src/server.ts",
     "bin": {
         "mcp-server-mysql": "./dist/index.js"
     },
@@ -22,9 +22,10 @@
     "author": "Tu Nombre",
     "license": "MIT",
     "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.0.4",
+        "@modelcontextprotocol/sdk": "^1.17.3",
         "mysql2": "^3.11.5",
-        "express": "^4.18.2"
+        "express": "^4.18.2",
+        "zod": "^3.25.46"
     },
     "devDependencies": {
         "@types/node": "^22.10.1",
