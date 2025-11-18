@@ -1,4 +1,5 @@
 # @f4ww4z/mcp-mysql-server
+[![smithery badge](https://smithery.ai/badge/@franHR11/pcpro-mcp-mysql)](https://smithery.ai/server/@franHR11/pcpro-mcp-mysql)
 [![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/f4ww4z/mcp-mysql-server)](https://archestra.ai/mcp-catalog/f4ww4z__mcp-mysql-server)
 [![smithery badge](https://smithery.ai/badge/@f4ww4z/mcp-mysql-server)](https://smithery.ai/server/@f4ww4z/mcp-mysql-server)
 
